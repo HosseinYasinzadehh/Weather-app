@@ -37,8 +37,8 @@ def get_weather(latitude, longitude):
         response_weather.raise_for_status()
         data = response_weather.json()
         return data
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
+    except requests.exceptions.RequestException:
+        return None
     
 
 
@@ -47,7 +47,8 @@ if coordinates:
     lat, lng = coordinates
     data = get_weather(lat, lng)
     if data:
-        print(f'{data["hourly"]["time"][0]} : {data["hourly"]["temperature_2m"][0]}')
+        for item in range(5):
+            print(f'{data["hourly"]["time"][item]} : {data["hourly"]["temperature_2m"][item]}')
     else: 
         print("data error")
 
