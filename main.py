@@ -20,31 +20,37 @@ def get_coordinates(city):
 
         else:
             return None
+
+def get_weather(latitude, longitude):
+    weather_params = { 
+            "latitude": latitude,
+            "longitude": longitude,
+            "hourly": "temperature_2m"
+            
+        }
+    
+    weather_url = "https://api.open-meteo.com/v1/forecast"
+    
+    response_weather = requests.get(weather_url,params=weather_params)
+    
+    try:
+        response_weather.raise_for_status()
+        data = response_weather.json()
+        return data
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
     
 
 
 coordinates = get_coordinates(city)
 if coordinates:
     lat, lng = coordinates
-    
-    weather_params = {
-        "latitude": lat,
-        "longitude": lng,
-        "hourly": "temperature_2m"
-        
-    }
-
-    weather_url = "https://api.open-meteo.com/v1/forecast"
-
-    response_weather = requests.get(weather_url,params=weather_params)
-
-    try:
-        response_weather.raise_for_status()
-        data = response_weather.json()
+    data = get_weather(lat, lng)
+    if data:
         print(f'{data["hourly"]["time"][0]} : {data["hourly"]["temperature_2m"][0]}')
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
+    else: 
+        print("data error")
+
+    
 else:
     print("City not found")
-
-
